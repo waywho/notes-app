@@ -12,7 +12,8 @@ class App extends Component {
     this.state = {
       showNote: false,
       notes: [],
-      note: {}
+      note: {},
+      newTag: false
     };
   }
 
@@ -49,8 +50,19 @@ class App extends Component {
     .catch((err) => console.log(err.response.data) );
   }
 
+  deleteNote = (id) => {
+    const newNotesState = this.state.notes.filter((note) => note.id !== id);
+    axios.delete(urlFor(`notes/${id}`))
+    .then((res) => this.setState({ notes: newNotesState }))
+    .catch((err) => console.log(err.reponse.data) );
+  }
+
+  showTagForm = () => {
+    this.setState({ newTag: true });
+  }
+
   render() {
-    const { showNote, notes, note } = this.state;
+    const { showNote, notes, note, newTag } = this.state;
     return (
       <div className="App">
         <Nav toggleNote={this.toggleNote} showNote={showNote}  />
@@ -58,12 +70,15 @@ class App extends Component {
           <Note 
           note={note}
           submitNote={this.submitNote}
+          showTagForm={this.showTagForm}
+          newTag={newTag}
           /> 
           : 
           <List 
             getNotes={this.getNotes} 
             notes={notes}
-            getNote={this.getNote} 
+            getNote={this.getNote}
+            deleteNote={this.deleteNote} 
             /> 
         }
       </div>
